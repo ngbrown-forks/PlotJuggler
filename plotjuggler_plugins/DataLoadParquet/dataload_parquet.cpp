@@ -248,6 +248,20 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
               row_values[col] = static_cast<double>(tmp);
               break;
             }
+			case ConvertedType::TIMESTAMP_MILLIS:
+            {
+              std::chrono::milliseconds tmp;
+              os >> tmp;
+              row_values[col] = static_cast<double>(tmp.count()) * (static_cast<double>(std::chrono::milliseconds::period::num) / static_cast<double>(std::chrono::milliseconds::period::den));
+              break;
+            }
+            case ConvertedType::TIMESTAMP_MICROS:
+            {
+              std::chrono::microseconds tmp;
+              os >> tmp;
+              row_values[col] = static_cast<double>(tmp.count()) * (static_cast<double>(std::chrono::microseconds::period::num) / static_cast<double>(std::chrono::microseconds::period::den));
+              break;
+            }
             default: {
               //Fallback in case no converted type is provided
               switch(type)
