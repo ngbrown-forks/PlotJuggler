@@ -150,6 +150,7 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
 
   for(size_t col=0; col<num_columns; col++)
   {
+    // TODO: Including per-column key_value_metadata requires https://github.com/apache/arrow/issues/31018
     auto column =  schema->Column(col);
     const std::string& name = column->name();
     if( name == selected_stamp.toStdString() )
