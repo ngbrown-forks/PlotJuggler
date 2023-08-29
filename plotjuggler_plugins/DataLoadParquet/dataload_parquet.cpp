@@ -183,9 +183,9 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
       switch(type)
       {
         case Type::BOOLEAN: {
-          bool tmp;
+          std::optional<bool> tmp;
           os >> tmp;
-          row_values[col] = static_cast<double>(tmp);
+          row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
           break;
         }
         case Type::INT32: 
@@ -194,72 +194,72 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
           {
             case ConvertedType::INT_8:
             {
-              int8_t tmp;
+              std::optional<int8_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::INT_16:
             {
-              int16_t tmp;
+              std::optional<int16_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::INT_32:
             {
-              int32_t tmp;
+              std::optional<int32_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::INT_64:
             {
-              int64_t tmp;
+              std::optional<int64_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::UINT_8:
             {
-              uint8_t tmp;
+              std::optional<uint8_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::UINT_16:
             {
-              uint16_t tmp;
+              std::optional<uint16_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::UINT_32:
             {
-              uint32_t tmp;
+              std::optional<uint32_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::UINT_64:
             {
-              uint64_t tmp;
+              std::optional<uint64_t> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp);
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
 			case ConvertedType::TIMESTAMP_MILLIS:
             {
-              std::chrono::milliseconds tmp;
+              std::optional<std::chrono::milliseconds> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp.count()) * (static_cast<double>(std::chrono::milliseconds::period::num) / static_cast<double>(std::chrono::milliseconds::period::den));
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value().count()) * (static_cast<double>(std::chrono::milliseconds::period::num) / static_cast<double>(std::chrono::milliseconds::period::den)) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             case ConvertedType::TIMESTAMP_MICROS:
             {
-              std::chrono::microseconds tmp;
+              std::optional<std::chrono::microseconds> tmp;
               os >> tmp;
-              row_values[col] = static_cast<double>(tmp.count()) * (static_cast<double>(std::chrono::microseconds::period::num) / static_cast<double>(std::chrono::microseconds::period::den));
+              row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value().count()) * (static_cast<double>(std::chrono::microseconds::period::num) / static_cast<double>(std::chrono::microseconds::period::den)) : std::numeric_limits<double>::quiet_NaN();
               break;
             }
             default: {
@@ -268,16 +268,16 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
               {
                 case Type::INT32: 
                 {
-                  int32_t tmp;
+                  std::optional<int32_t> tmp;
                   os >> tmp;
-                  row_values[col] = static_cast<double>(tmp);
+                  row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
                   break;
                 }
                 case Type::INT64:
                 {
-                  int64_t tmp;
+                  std::optional<int64_t> tmp;
                   os >> tmp;
-                  row_values[col] = static_cast<double>(tmp);
+                  row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value()) : std::numeric_limits<double>::quiet_NaN();
                   break;
                 }
               }
@@ -286,13 +286,15 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
           break;
         }
         case Type::FLOAT: {
-          float tmp;
+          std::optional<float> tmp;
           os >> tmp;
-          row_values[col] = static_cast<double>(tmp);
+          row_values[col] = static_cast<double>(tmp.value_or(std::numeric_limits<float>::quiet_NaN()));
           break;
         }
         case Type::DOUBLE: {
-          os >> row_values[col];
+          std::optional<double> tmp;
+          os >> tmp;
+          row_values[col] = tmp.value_or(std::numeric_limits<double>::quiet_NaN());
           break;
         }
         default: {
