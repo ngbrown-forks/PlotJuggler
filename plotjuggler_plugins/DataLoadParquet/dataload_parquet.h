@@ -7,7 +7,7 @@
 
 #define QT_NO_KEYWORDS
 #undef signals
-#include <parquet/stream_reader.h>
+#include "./parquet_int96.h"
 
 using namespace PJ;
 

@@ -96,6 +96,7 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
     valid_column[col] = (type == Type::BOOLEAN ||
                          type == Type::INT32 ||
                          type == Type::INT64 ||
+                         type == Type::INT96 ||
                          type == Type::FLOAT ||
                          type == Type::DOUBLE);
 
@@ -163,7 +164,7 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
     }
   }
 
-  parquet::StreamReader os{std::move(parquet_reader_)};
+  parquet::StreamReaderLegacy os{std::move(parquet_reader_)};
 
   std::vector<double> row_values( num_columns, 0.0 );
 
@@ -284,6 +285,13 @@ bool DataLoadParquet::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_
               }
             }
           }
+          break;
+        }
+        case Type::INT96:
+        {
+          std::optional<std::chrono::nanoseconds> tmp;
+          os >> tmp;
+          row_values[col] = tmp.has_value() ? static_cast<double>(tmp.value().count()) * (static_cast<double>(std::chrono::nanoseconds::period::num) / static_cast<double>(std::chrono::nanoseconds::period::den)) : std::numeric_limits<double>::quiet_NaN();
           break;
         }
         case Type::FLOAT: {

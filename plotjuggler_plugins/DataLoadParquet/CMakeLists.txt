@@ -27,7 +27,10 @@ if(Arrow_FOUND)
 
     QT5_WRAP_UI ( UI_SRC  dataload_parquet.ui  )
 
-    SET( SRC dataload_parquet.cpp )
+    SET( SRC
+        dataload_parquet.cpp
+        parquet_int96.cpp
+        )
 
     add_library(DataLoadParquet SHARED ${SRC} ${UI_SRC}  )
 
